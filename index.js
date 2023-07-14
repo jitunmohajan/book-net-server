@@ -118,7 +118,7 @@ const run = async () => {
 run().catch((err) => console.log(err));
 
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  res.send('Book-net backend is running successfully!');
 });
 
 app.listen(port, () => {
