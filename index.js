@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId, Timestamp } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -19,7 +19,7 @@ const client = new MongoClient(uri, {
 
 const run = async () => {
   try {
-    const db = client.db('tech-net');
+    const db = client.db('book-net');
     const bookCollection = db.collection('book');
 
     app.get('/books', async (req, res) => {
@@ -53,36 +53,30 @@ const run = async () => {
       res.send(result);
     });
 
-    app.post('/comment/:id', async (req, res) => {
-      const bookId = req.params.id;
-      const comment = req.body.comment;
+    app.post('/add-new-book', async (req, res) => {
+      // const bookId = req.params.id;
+      const newBook = req.body;
 
-      console.log(bookId);
-      console.log(comment);
+      // console.log(newBook);
 
-      const result = await bookCollection.updateOne(
-        { _id: ObjectId(bookId) },
-        { $push: { comments: comment } }
-      );
+      const result = await bookCollection.insertOne(newBook, { timestamps: true });
 
-      console.log(result);
+      // console.log(result);
 
-      if (result.modifiedCount !== 1) {
-        console.error('book not found or comment not added');
-        res.json({ error: 'book not found or comment not added' });
-        return;
-      }
-
-      console.log('Comment added successfully');
-      res.json({ message: 'Comment added successfully' });
+      res.json({ 
+        "success": true, 
+        "statusCode":200,
+        "message": "Book created successfully",
+        data: result
+      });
     });
 
-    app.get('/comment/:id', async (req, res) => {
+    app.get('/review/:id', async (req, res) => {
       const bookId = req.params.id;
 
       const result = await bookCollection.findOne(
         { _id: ObjectId(bookId) },
-        { projection: { _id: 0, comments: 1 } }
+        { projection: { _id: 0, reviews: 1 } }
       );
 
       if (result) {
