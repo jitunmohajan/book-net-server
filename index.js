@@ -28,6 +28,21 @@ const run = async () => {
 
       res.send({ status: true, data: book });
     });
+    
+    app.get('/recent-books', async (req, res) => {
+      const cursor = bookCollection.find().sort({ timestampField: -1 }).limit(10);
+      const book = await cursor.toArray();
+
+      res.send({ status: true, data: book });
+    });
+
+    app.get('/search-books', async (req, res) => {
+      const search = req.body;
+      const cursor = bookCollection.find(search);
+      const book = await cursor.toArray();
+
+      res.send({ status: true, data: book });
+    });
 
     app.post('/book', async (req, res) => {
       const book = req.body;
@@ -57,11 +72,11 @@ const run = async () => {
       // const bookId = req.params.id;
       const newBook = req.body;
 
-      // console.log(newBook);
+      console.log(newBook);
 
-      const result = await bookCollection.insertOne(newBook, { timestamps: true });
+      const result = await bookCollection.insertOne(newBook, { timestamp:true});
 
-      // console.log(result);
+      console.log(result);
 
       res.json({ 
         "success": true, 
