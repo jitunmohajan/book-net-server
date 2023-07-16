@@ -71,7 +71,7 @@ const run = async () => {
     app.post('/add-new-book', async (req, res) => {
       // const bookId = req.params.id;
       const newBook = req.body;
-
+      
       console.log(newBook);
 
       const result = await bookCollection.insertOne(newBook, { timestamp:true});
